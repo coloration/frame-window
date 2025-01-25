@@ -1,5 +1,9 @@
+import { vitePluginForArco } from '@arco-plugins/vite-vue'
 import Vue from '@vitejs/plugin-vue'
 import UnoCSS from 'unocss/vite'
+import AutoImport from 'unplugin-auto-import/vite'
+import { ArcoResolver } from 'unplugin-vue-components/resolvers'
+import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
 
 const host = process.env.TAURI_DEV_HOST
@@ -9,6 +13,19 @@ export default defineConfig(async () => ({
   plugins: [
     Vue(),
     UnoCSS(),
+    AutoImport({
+      resolvers: [ArcoResolver()],
+    }),
+    Components({
+      resolvers: [
+        ArcoResolver({
+          sideEffect: true,
+        }),
+      ],
+    }),
+    vitePluginForArco({
+      style: 'css',
+    }),
   ],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`

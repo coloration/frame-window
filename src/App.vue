@@ -54,6 +54,10 @@ async function saveConf() {
   if (autoStartEnable !== appConf.autoStart) {
     autoStartEnable ? await disable() : await enable()
   }
+  handleCancel()
+}
+
+async function handleCancel() {
   modalVisible.value = false
 }
 </script>
@@ -66,28 +70,34 @@ async function saveConf() {
     framespacing="0"
     :src="appConf.frameUrl"
   />
-
-  <div v-if="modalVisible" class="modal">
-    <div class="modal-shadow" @click="modalVisible = false" />
-    <div class="modal-container">
-      <div class="modal-form">
-        <label>
-          <span>开机自启: </span>
-          <input v-model="appConf.autoStart" type="checkbox">
-        </label>
-
-        <label>
-          <span>网页地址: </span>
-          <input v-model="appConf.frameUrl" type="text">
-        </label>
-      </div>
-      <div class="flex justify-end">
-        <button class="border-1 border-blue-700 rounded bg-blue-500 px-2 py-1 text-white tracking-wider" @click="saveConf">
-          保存
-        </button>
-      </div>
+  <a-drawer
+    :width="380"
+    :visible="modalVisible"
+    ok-text="保存"
+    unmount-on-close
+    @ok="saveConf"
+    @cancel="handleCancel"
+  >
+    <template #title>
+      系统设置
+    </template>
+    <div>
+      <a-form :model="appConf">
+        <a-form-item
+          field="autoStart"
+          label="开机启动"
+        >
+          <a-checkbox v-model="appConf.autoStart" />
+        </a-form-item>
+        <a-form-item
+          field="frameUrl"
+          label="网页地址"
+        >
+          <a-input v-model="appConf.frameUrl" />
+        </a-form-item>
+      </a-form>
     </div>
-  </div>
+  </a-drawer>
 </template>
 
 <style lang="postcss">
@@ -98,31 +108,5 @@ html {
 }
 .frame-window {
   @apply w-full h-full border-none z-10;
-}
-
-.modal {
-  @apply fixed inset-0 z-20;
-}
-.modal-shadow {
-  @apply absolute inset-0 bg-dark/30;
-}
-
-.modal-container {
-  @apply absolute z-1 left-0 top-0 h-full w-80 bg-white px-4 pb-4 flex flex-col;
-
-  & .modal-form {
-    @apply flex-1;
-  }
-  & label {
-    @apply block py-2 flex items-center;
-  }
-
-  & span {
-    @apply w-18;
-  }
-
-  & input {
-    @apply outline-none outline-0 border-1 border-blue-500 rounded px-2 py-1;
-  }
 }
 </style>
